@@ -1,0 +1,3 @@
+port=8232
+url=https://news.ycombinator.com/
+verbose=yes
