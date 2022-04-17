@@ -54,13 +54,68 @@ def is_html_page(content):
     if "</body>" in string_content: 
         return True
     return False
+
+
+def has_string_not_opened_tag(string_with_tag):
+    length = len(string_with_tag)
+    for i in range(0, length):
+        current_char = string_with_tag[i]
+        if('<' == current_char):
+            return False
+        if('>' == current_char):
+            return True
+    return False
+
+def delete_tag_from_string(string_with_tag):
+    if(has_string_not_opened_tag(string_with_tag)):
+        string_with_tag = '<' + string_with_tag
+    buf_string = ""
+    flag_add = True
+    length = len(string_with_tag)
+    for i in range(0, length):
+        current_char = string_with_tag[i]
+        if('<' == current_char):
+            flag_add = False 
+            continue
+        if('>' == current_char):
+            flag_add = True
+            continue
+        if(flag_add):
+            buf_string += current_char
+    return buf_string
     
+
+def calc_len_of_page_element(string_element):
+    buf_string = str(string_element)
+
+    chars_prohibited = [' ', ',', '.', '"', '\t', '\n', "'"]
+    for i in range(0, len(chars_prohibited)):  
+        current = chars_prohibited[i]
+        buf_string = "".join(buf_string.split(current)) 
+
+    buf_string = delete_tag_from_string(buf_string)
+
+    length = len(buf_string)
+    return length
+
+
 def change_page_content(page_content, string_for_adding_to_words):
-    arr = page_content.decode("utf-8").split(' ')
+    page_content = page_content.decode("utf-8")
+
+    page_content = page_content.replace('\t', ' ')
+    page_content = page_content.replace('\n', ' ')
+    page_content = page_content.replace('\n', ' ')
+
+    page_content = page_content.replace('<', ' <')
+    page_content = page_content.replace('>', '> ')
+
+    page_content = str(page_content)
+
+    arr = page_content.split(' ')
     length = len(arr)
     for i in range(0, length):
         element = arr[i]
-        if(6 == len(element)):
+        if(6 == calc_len_of_page_element(element)):
             element += string_for_adding_to_words
         arr[i] = element 
     changed_content_string = ' '.join(arr)
