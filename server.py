@@ -104,7 +104,6 @@ def change_page_content(page_content, string_for_adding_to_words):
 
     page_content = page_content.replace('\t', ' ')
     page_content = page_content.replace('\n', ' ')
-    page_content = page_content.replace('\n', ' ')
 
     page_content = page_content.replace('<', ' <')
     page_content = page_content.replace('>', '> ')
@@ -113,12 +112,18 @@ def change_page_content(page_content, string_for_adding_to_words):
 
     arr = page_content.split(' ')
     length = len(arr)
+
     for i in range(0, length):
         element = arr[i]
         if(6 == calc_len_of_page_element(element)):
             element += string_for_adding_to_words
         arr[i] = element 
+    
     changed_content_string = ' '.join(arr)
+
+    changed_content_string = changed_content_string.replace('.' + string_for_adding_to_words, string_for_adding_to_words + '.')
+    changed_content_string = changed_content_string.replace(',' + string_for_adding_to_words, string_for_adding_to_words + ',')
+
     return changed_content_string
 
 @app.route('/', defaults={'path': ''})
