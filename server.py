@@ -124,25 +124,39 @@ def change_page_content(page_content, string_for_adding_to_words):
     changed_content_string = changed_content_string.replace('.' + string_for_adding_to_words, string_for_adding_to_words + '.')
     changed_content_string = changed_content_string.replace(',' + string_for_adding_to_words, string_for_adding_to_words + ',')
 
-    return changed_content_string
+    return links_replacing_on_page(changed_content_string)
+
+def links_replacing_on_page(content):
+    content = content.replace('href="http', 'href="#')
+    content = content.replace("href='http", "href='#")
+    return content
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all_queries(path):
     global global_url_address
     global global_verbose
+    
     request_args_dict = request.args.to_dict()
     url_params_string = create_url_params_string(request_args_dict)
     full_url_address = global_url_address + path + url_params_string
     (page_content, headers) = send_query_to_server(full_url_address)
     is_html_flag = is_html_page(page_content)
+    
     if('yes' == global_verbose):
-        print("Full url address: " + full_url_address + "  Html: " + str(is_html_flag))
+        print_logs(full_url_address, is_html_flag)
+
     if(False == is_html_flag):
         return create_response_obj(page_content, headers)
     else:
         modified_page_content = change_page_content(page_content, '™')
         return create_response_obj(modified_page_content, headers)
+
+def print_logs(full_url_address, is_html_flag):
+    space_line = "   "
+    message = "Url: " + full_url_address + space_line + "Html: " + str(is_html_flag)
+    print(message)
+
 
 def print_server_params(url, verbose, port):
     print('\n')
