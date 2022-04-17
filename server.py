@@ -25,7 +25,6 @@ def create_headers_dict(headers_arr):
 
 
 def create_response_obj(answer_from_server_data, headers_array):
-    answer_from_server_data = str(answer_from_server_data)
     resp = make_response(answer_from_server_data)
     resp.headers = create_headers_dict(headers_array)
     return resp
@@ -48,6 +47,25 @@ def create_url_params_string(request_args_dict):
         url_params_string += pair_string
     return url_params_string[:len(url_params_string) - 1]
 
+def is_html_page(content):
+    string_content = str(content)
+    if "</head>" in string_content: 
+        return True
+    if "</body>" in string_content: 
+        return True
+    return False
+    
+def change_page_content(page_content, string_for_adding_to_words):
+    arr = page_content.decode("utf-8").split(' ')
+    length = len(arr)
+    for i in range(0, length):
+        element = arr[i]
+        if(6 == len(element)):
+            element += string_for_adding_to_words
+        arr[i] = element 
+    changed_content_string = ' '.join(arr)
+    return changed_content_string
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all_queries(path):
@@ -56,10 +74,15 @@ def catch_all_queries(path):
     request_args_dict = request.args.to_dict()
     url_params_string = create_url_params_string(request_args_dict)
     full_url_address = global_url_address + path + url_params_string
+    (page_content, headers) = send_query_to_server(full_url_address)
+    is_html_flag = is_html_page(page_content)
     if('yes' == global_verbose):
-        print("Full url address: " + full_url_address)
-    (page_html_content, headers) = send_query_to_server(full_url_address)
-    return create_response_obj(page_html_content, headers)
+        print("Full url address: " + full_url_address + "  Html: " + str(is_html_flag))
+    if(False == is_html_flag):
+        return create_response_obj(page_content, headers)
+    else:
+        modified_page_content = change_page_content(page_content, '™')
+        return create_response_obj(modified_page_content, headers)
 
 def print_server_params(url, verbose, port):
     print('\n')
@@ -73,7 +96,7 @@ def send_query_to_server(url):
         url = str(url)
         request = urllib.request.Request(url)
         response = urllib.request.urlopen(request)
-        content = response.read().decode('UTF-8')
+        content = response.read()
         headers = response.getheaders()
         return (content, headers)
     except Exception:
