@@ -1,60 +1,23 @@
 from flask import Flask, request, make_response
 from waitress import serve
-import urllib.request
+
+from scripts.parsing_utils.is_html_page import is_html_page
+from scripts.parsing_utils.create_url_params_string import create_url_params_string
+from scripts.logging_info.print_server_params import print_server_params
+from scripts.logging_info.print_logs import print_logs
+from scripts.network_http.send_query_to_server import send_query_to_server
+from scripts.config_read.read_as_dict_from_file import read_as_dict_from_file
+from scripts.headers_utils.create_headers_dict import create_headers_dict
 
 global_url_address = ""
 global_verbose = ""
 
 app = Flask(__name__)
 
-def is_header_allowed(header):
-    prohibited_headers = ["CONNECTION", "CONTENT-LENGTH", "TRANSFER-ENCODING"]
-    header_in_array_flag = (header.upper() in prohibited_headers)
-    return (header_in_array_flag == False)
-
-def create_headers_dict(headers_arr):
-    if(headers_arr is None):
-        return {}
-    dict = {}
-    length = len(headers_arr)
-    for i in range(0, length):
-        (key, value) = headers_arr[i]
-        if(is_header_allowed(key)):
-            dict[key] = value
-    return dict
-
-
 def create_response_obj(answer_from_server_data, headers_array):
     resp = make_response(answer_from_server_data)
     resp.headers = create_headers_dict(headers_array)
     return resp
-
-def read_as_dict_from_file(name_of_file):
-    dict = {}
-    f = open(name_of_file, 'r')
-    for line in f:
-        pair_arr = line.strip().split("=")
-        key = pair_arr[0].strip()
-        value = pair_arr[1].strip()
-        dict[key] = value
-    f.close()
-    return dict
-
-def create_url_params_string(request_args_dict):
-    url_params_string = "?"
-    for key, value in request_args_dict.items():
-        pair_string = key + "=" + value + "&"
-        url_params_string += pair_string
-    return url_params_string[:len(url_params_string) - 1]
-
-def is_html_page(content):
-    string_content = str(content)
-    if "</head>" in string_content: 
-        return True
-    if "</body>" in string_content: 
-        return True
-    return False
-
 
 def has_string_not_opened_tag(string_with_tag):
     length = len(string_with_tag)
@@ -154,30 +117,6 @@ def catch_all_queries(path):
         modified_page_content = change_page_content(page_content, '™')
         return create_response_obj(modified_page_content, headers)
 
-def print_logs(full_url_address, is_html_flag):
-    space_line = "   "
-    message = "Url: " + full_url_address + space_line + "Html: " + str(is_html_flag)
-    print(message)
-
-
-def print_server_params(url, verbose, port):
-    print('\n')
-    print("Url address: " + url)
-    print("Verbose rendering: " + verbose)
-    print("Port number: " + port)
-    print('\n')
-
-def send_query_to_server(url):
-    try:
-        url = str(url)
-        request = urllib.request.Request(url)
-        response = urllib.request.urlopen(request)
-        content = response.read()
-        headers = response.getheaders()
-        return (content, headers)
-    except Exception:
-        content = "<h1>Can not open resource</h1>"
-        return (content, None)
 
 if __name__ == '__main__':
     config_dict = read_as_dict_from_file("config.txt")
