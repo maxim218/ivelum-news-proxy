@@ -88,7 +88,7 @@ def delete_tag_from_string(string_with_tag):
 def calc_len_of_page_element(string_element):
     buf_string = str(string_element)
 
-    chars_prohibited = [' ', ',', '.', '"', '\t', '\n', "'"]
+    chars_prohibited = [' ', ',', '.', '"', '\t', '\n', "'", '?', '!', ';']
     for i in range(0, len(chars_prohibited)):  
         current = chars_prohibited[i]
         buf_string = "".join(buf_string.split(current)) 
@@ -104,10 +104,8 @@ def change_page_content(page_content, string_for_adding_to_words):
 
     page_content = page_content.replace('\t', ' ')
     page_content = page_content.replace('\n', ' ')
-
     page_content = page_content.replace('<', ' <')
     page_content = page_content.replace('>', '> ')
-
     page_content = str(page_content)
 
     arr = page_content.split(' ')
@@ -121,8 +119,12 @@ def change_page_content(page_content, string_for_adding_to_words):
     
     changed_content_string = ' '.join(arr)
 
-    changed_content_string = changed_content_string.replace('.' + string_for_adding_to_words, string_for_adding_to_words + '.')
-    changed_content_string = changed_content_string.replace(',' + string_for_adding_to_words, string_for_adding_to_words + ',')
+    special_chars_arr = [' ', ',', '.', '"', "'", '?', '!', ';']
+    for i in range(0, len(special_chars_arr)):
+        char_element = special_chars_arr[i]
+        old_val = char_element + string_for_adding_to_words
+        new_val = string_for_adding_to_words + char_element
+        changed_content_string = changed_content_string.replace(old_val, new_val)
 
     return links_replacing_on_page(changed_content_string)
 
@@ -136,7 +138,7 @@ def links_replacing_on_page(content):
 def catch_all_queries(path):
     global global_url_address
     global global_verbose
-    
+
     request_args_dict = request.args.to_dict()
     url_params_string = create_url_params_string(request_args_dict)
     full_url_address = global_url_address + path + url_params_string
