@@ -1,5 +1,6 @@
-from scripts.parsing_utils.calc_len_of_page_element import calc_len_of_page_element
-from scripts.parsing_utils.links_replacing_on_page import links_replacing_on_page
+from scripts.parsing_utils.calc_len_of_elem import calc_len_of_elem
+from scripts.parsing_utils.links_replace import links_replace
+
 
 def change_page_content(page_content, string_for_adding_to_words):
     page_content = page_content.decode("utf-8")
@@ -15,10 +16,10 @@ def change_page_content(page_content, string_for_adding_to_words):
 
     for i in range(0, length):
         element = arr[i]
-        if(6 == calc_len_of_page_element(element)):
+        if 6 == calc_len_of_elem(element):
             element += string_for_adding_to_words
-        arr[i] = element 
-    
+        arr[i] = element
+
     changed_content_string = ' '.join(arr)
 
     special_chars_arr = [' ', ',', '.', '"', "'", '?', '!', ';']
@@ -26,6 +27,7 @@ def change_page_content(page_content, string_for_adding_to_words):
         char_element = special_chars_arr[i]
         old_val = char_element + string_for_adding_to_words
         new_val = string_for_adding_to_words + char_element
-        changed_content_string = changed_content_string.replace(old_val, new_val)
+        changed_content_string = changed_content_string.replace(
+            old_val, new_val)
 
-    return links_replacing_on_page(changed_content_string)
+    return links_replace(changed_content_string)

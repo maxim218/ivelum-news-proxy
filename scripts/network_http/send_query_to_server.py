@@ -1,5 +1,6 @@
 import urllib.request
 
+
 def send_query_to_server(url):
     try:
         url = str(url)

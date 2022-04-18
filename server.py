@@ -3,7 +3,7 @@ from waitress import serve
 
 
 from scripts.parsing_utils.is_html_page import is_html_page
-from scripts.parsing_utils.create_url_params_string import create_url_params_string
+from scripts.parsing_utils.url_params_string import url_params_string
 from scripts.logging_info.print_server_params import print_server_params
 from scripts.logging_info.print_logs import print_logs
 from scripts.network_http.send_query_to_server import send_query_to_server
@@ -32,15 +32,15 @@ def catch_all_queries(path):
     global global_verbose
 
     request_args_dict = request.args.to_dict()
-    url_params_string = create_url_params_string(request_args_dict)
-    full_url_address = global_url_address + path + url_params_string
+    url_pars_str = url_params_string(request_args_dict)
+    full_url_address = global_url_address + path + url_pars_str
     (page_content, headers) = send_query_to_server(full_url_address)
     is_html_flag = is_html_page(page_content)
-    
-    if('yes' == global_verbose):
+
+    if 'yes' == global_verbose:
         print_logs(full_url_address, is_html_flag)
 
-    if(False == is_html_flag):
+    if not is_html_flag:
         return create_response_obj(page_content, headers)
     else:
         modified_page_content = change_page_content(page_content, '™')
