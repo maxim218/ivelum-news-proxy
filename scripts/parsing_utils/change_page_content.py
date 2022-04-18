@@ -8,8 +8,12 @@ def change_page_content(page_content, string_for_adding_to_words):
 
     page_content = page_content.replace('\t', ' ')
     page_content = page_content.replace('\n', ' ')
-    page_content = page_content.replace('<', ' <')
-    page_content = page_content.replace('>', '> ')
+
+    arrows_together = '><'
+    arrows_with_separator = '> ' + '$$$%%%@@@%%%$$$' + ' <'
+
+    page_content = page_content.replace(arrows_together, arrows_with_separator)
+
     page_content = str(page_content)
 
     arr = page_content.split(' ')
@@ -30,5 +34,10 @@ def change_page_content(page_content, string_for_adding_to_words):
         new_val = string_for_adding_to_words + char_element
         changed_content_string = changed_content_string.replace(
             old_val, new_val)
+
+    changed_content_string = changed_content_string.replace(
+        arrows_with_separator, arrows_together)
+    changed_content_string = changed_content_string.replace(
+        '$$$%%%@@@%%%$$$', ' ')
 
     return links_replace(changed_content_string)
