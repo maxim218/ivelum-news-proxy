@@ -1,5 +1,6 @@
 from scripts.parsing_utils.calc_len_of_elem import calc_len_of_elem
 from scripts.parsing_utils.links_replace import links_replace
+from scripts.store_const.get_prohib_chars import get_prohib_chars
 
 
 def change_page_content(page_content, string_for_adding_to_words):
@@ -22,7 +23,7 @@ def change_page_content(page_content, string_for_adding_to_words):
 
     changed_content_string = ' '.join(arr)
 
-    special_chars_arr = [' ', ',', '.', '"', "'", '?', '!', ';']
+    special_chars_arr = get_prohib_chars()
     for i in range(0, len(special_chars_arr)):
         char_element = special_chars_arr[i]
         old_val = char_element + string_for_adding_to_words
