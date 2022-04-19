@@ -14,7 +14,7 @@ from scripts.parsing_utils.change_page_content import change_page_content
 
 global_url_address = ""
 global_verbose = ""
-
+global_port = 0
 
 app = Flask(__name__)
 
@@ -30,6 +30,7 @@ def create_response_obj(answer_from_server_data, headers_array, code):
 def catch_all_queries(path):
     global global_url_address
     global global_verbose
+    global global_port
 
     request_args_dict = request.args.to_dict()
     url_pars_str = url_params_string(request_args_dict)
@@ -43,7 +44,8 @@ def catch_all_queries(path):
     if not is_html_flag:
         return create_response_obj(page_content, headers, code)
     else:
-        modified_page_content = change_page_content(page_content, '™')
+        modified_page_content = change_page_content(
+            page_content, '™', global_url_address, global_port)
         return create_response_obj(modified_page_content, headers, code)
 
 
@@ -52,5 +54,6 @@ if __name__ == '__main__':
     global_url_address = config_dict['url']
     global_verbose = config_dict['verbose']
     port = config_dict['port']
+    global_port = config_dict['port']
     print_server_params(global_url_address, global_verbose, port)
     serve(app, host="0.0.0.0", port=int(port))

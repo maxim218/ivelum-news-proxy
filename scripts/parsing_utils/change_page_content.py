@@ -3,7 +3,11 @@ from scripts.parsing_utils.links_replace import links_replace
 from scripts.store_const.get_prohib_chars import get_prohib_chars
 
 
-def change_page_content(page_content, string_for_adding_to_words):
+def change_page_content(
+        page_content,
+        string_for_adding_to_words,
+        global_url_address,
+        global_port):
     page_content = page_content.decode("utf-8")
 
     page_content = page_content.replace('\t', ' ')
@@ -40,4 +44,7 @@ def change_page_content(page_content, string_for_adding_to_words):
     changed_content_string = changed_content_string.replace(
         '$$$%%%@@@%%%$$$', ' ')
 
-    return links_replace(changed_content_string)
+    return links_replace(
+        changed_content_string,
+        global_url_address,
+        global_port)
