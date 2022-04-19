@@ -1,10 +1,10 @@
+from scripts.config_read.line_parse import line_parse
+
+
 def read_as_dict_from_file(name_of_file):
-    dict = {}
+    dict_config = {}
     f = open(name_of_file, 'r')
     for line in f:
-        pair_arr = line.strip().split("=")
-        key = pair_arr[0].strip()
-        value = pair_arr[1].strip()
-        dict[key] = value
+        line_parse(dict_config, line)
     f.close()
-    return dict
+    return dict_config
