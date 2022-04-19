@@ -1,5 +1,6 @@
 from scripts.parsing_utils.calc_len_of_elem import calc_len_of_elem
 from scripts.parsing_utils.links_replace import links_replace
+from scripts.parsing_utils.modify_classes import modify_classes
 from scripts.store_const.get_prohib_chars import get_prohib_chars
 
 
@@ -12,6 +13,8 @@ def change_page_content(
 
     page_content = page_content.replace('\t', ' ')
     page_content = page_content.replace('\n', ' ')
+
+    filtered_classes_array = modify_classes(page_content)
 
     arrows_together = '><'
     arrows_with_separator = '> ' + '$$$%%%@@@%%%$$$' + ' <'
@@ -43,6 +46,11 @@ def change_page_content(
         arrows_with_separator, arrows_together)
     changed_content_string = changed_content_string.replace(
         '$$$%%%@@@%%%$$$', ' ')
+
+    for name_class in filtered_classes_array:
+        with_tm = name_class + string_for_adding_to_words
+        changed_content_string = changed_content_string.replace(
+            with_tm, name_class)
 
     return links_replace(
         changed_content_string,

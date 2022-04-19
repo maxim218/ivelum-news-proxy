@@ -1,5 +1,7 @@
 def get_prohib_chars():
     arr = [
+        '“',
+        '”',
         ' ',
         ',',
         '.',
