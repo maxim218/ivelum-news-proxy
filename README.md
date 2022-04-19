@@ -13,6 +13,8 @@ Install libs
 ```
 pip install --upgrade Flask
 pip install --upgrade waitress
+pip install requests
+pip install --upgrade requests
 ```
 
 To start a server run - server.py

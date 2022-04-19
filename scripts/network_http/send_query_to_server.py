@@ -1,4 +1,5 @@
 import urllib.request
+import requests
 
 
 def send_query_to_server(url):
@@ -8,7 +9,8 @@ def send_query_to_server(url):
         response = urllib.request.urlopen(request)
         content = response.read()
         headers = response.getheaders()
-        return (content, headers)
+        return content, headers, response.code
     except Exception:
-        content = "<h1>Can not open resource</h1>"
-        return (content, None)
+        r = requests.get(url)
+        content = r.text
+        return content, None, r.status_code

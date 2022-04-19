@@ -19,8 +19,8 @@ global_verbose = ""
 app = Flask(__name__)
 
 
-def create_response_obj(answer_from_server_data, headers_array):
-    resp = make_response(answer_from_server_data)
+def create_response_obj(answer_from_server_data, headers_array, code):
+    resp = make_response(answer_from_server_data, int(code))
     resp.headers = create_headers_dict(headers_array)
     return resp
 
@@ -34,17 +34,17 @@ def catch_all_queries(path):
     request_args_dict = request.args.to_dict()
     url_pars_str = url_params_string(request_args_dict)
     full_url_address = global_url_address + path + url_pars_str
-    (page_content, headers) = send_query_to_server(full_url_address)
+    (page_content, headers, code) = send_query_to_server(full_url_address)
     is_html_flag = is_html_page(page_content)
 
     if 'yes' == global_verbose:
         print_logs(full_url_address, is_html_flag)
 
     if not is_html_flag:
-        return create_response_obj(page_content, headers)
+        return create_response_obj(page_content, headers, code)
     else:
         modified_page_content = change_page_content(page_content, '™')
-        return create_response_obj(modified_page_content, headers)
+        return create_response_obj(modified_page_content, headers, code)
 
 
 if __name__ == '__main__':
