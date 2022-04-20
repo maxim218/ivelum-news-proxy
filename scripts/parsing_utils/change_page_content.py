@@ -1,8 +1,11 @@
 from scripts.parsing_utils.calc_len_of_elem import calc_len_of_elem
 from scripts.parsing_utils.links_replace import links_replace
 from scripts.parsing_utils.modify_classes import modify_classes
+from scripts.parsing_utils.swap_tm_and_tags import swap_tm_and_tags
 from scripts.store_const.get_chars_groups import get_chars_groups
 from scripts.store_const.get_prohib_chars import get_prohib_chars
+from scripts.store_const.get_repeat_depth import get_repeat_depth
+from scripts.store_const.get_tags import get_tags
 
 
 def change_page_content(
@@ -57,6 +60,15 @@ def change_page_content(
         with_tm = name_class + string_for_adding_to_words
         changed_content_string = changed_content_string.replace(
             with_tm, name_class)
+
+    for i in range(0, get_repeat_depth()):
+        tm_string = string_for_adding_to_words
+        tags = get_tags()
+        changed_content_string = swap_tm_and_tags(
+            tm_string, tags, changed_content_string)
+        for prohibited in get_prohib_chars():
+            changed_content_string = changed_content_string.replace(
+                prohibited + tm_string, tm_string + prohibited)
 
     return links_replace(
         changed_content_string,
