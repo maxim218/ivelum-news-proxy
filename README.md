@@ -38,3 +38,9 @@ Test style of the code and fix some errors
 ```
 python code_style_control.py
 ```
+
+Run server
+
+```
+python server.py
+```
