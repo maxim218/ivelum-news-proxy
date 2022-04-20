@@ -1,6 +1,7 @@
 from scripts.parsing_utils.calc_len_of_elem import calc_len_of_elem
 from scripts.parsing_utils.links_replace import links_replace
 from scripts.parsing_utils.modify_classes import modify_classes
+from scripts.store_const.get_chars_groups import get_chars_groups
 from scripts.store_const.get_prohib_chars import get_prohib_chars
 
 
@@ -10,6 +11,11 @@ def change_page_content(
         global_url_address,
         global_port):
     page_content = page_content.decode("utf-8")
+
+    chars_groups = get_chars_groups()
+    for tup in chars_groups:
+        (before, after) = tup
+        page_content = page_content.replace(before, after)
 
     page_content = page_content.replace('\t', ' ')
     page_content = page_content.replace('\n', ' ')
